@@ -24,11 +24,11 @@ export async function sendEmail({ to, subject, body }) {
   });
 
   const info = await transporter.sendMail({
-    from: `"安伟伟" <${config.user}>`,
+    from: config.user,  // 只用邮箱，避免昵称编码问题
     to,
     subject,
     text: body,
-    html: `<pre style="font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0;">${body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</pre>`,
+    html: `<p>${body.replace(/\n/g, '<br>')}</p>`,
   });
 
   return { messageId: info.messageId, success: true };
