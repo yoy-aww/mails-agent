@@ -29,7 +29,7 @@ export async function sendEmail({ to, subject, body }) {
     to,
     subject,
     text: body,
-    encoding: 'utf-8',
+    charset: 'utf-8',
   });
 
   return { messageId: info.messageId, success: true };
