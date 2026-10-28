@@ -26,14 +26,11 @@ export async function sendEmail({ to, subject, body }) {
   });
 
   const info = await transporter.sendMail({
-    from: `"${config.user.split('@')[0]}" <${config.user}>`,
+    from: config.user,  // 只用邮箱，避免中文名编码问题
     to,
     subject,
     text: body,
-    // 明确指定 UTF-8 和 base64 编码
-    encoding: 'utf-8',
     textEncoding: 'base64',
-    subjectEncoding: 'utf-8',
   });
 
   return { messageId: info.messageId, success: true };
