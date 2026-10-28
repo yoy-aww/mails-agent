@@ -7,7 +7,7 @@
 - **模板管理**：预设固定邮件模板，一键调用
 - **简洁发件**：选择模板 → 填写收件人 → 点击发送
 - **发送历史**：记录每次发送状态（成功/失败）
-- **中文兼容**：UTF-8 + multipart/alternative，完美支持中文显示
+- **中文兼容**：UTF-8 + base64 编码，完美支持中文显示
 - **Web 界面**：基于 React + antd，现代简洁的 UI
 
 ## 技术栈
@@ -42,13 +42,6 @@ npm run dev
 
 详见 [DEPLOY.md](./DEPLOY.md)
 
-## 使用流程
-
-1. **设置 SMTP**：在「⚙️ 设置」页面填写邮箱授权码
-2. **创建模板**：在「📋 模板管理」新建你的固定邮件模板
-3. **发送邮件**：在「📤 发送邮件」选择模板、填写收件人、点击发送
-4. **查看历史**：在「📜 发送历史」追踪发送状态
-
 ## 项目结构
 
 ```
@@ -73,13 +66,14 @@ mails-agent/
 │   │   ├── App.tsx         # 主布局 + Tabs
 │   │   ├── api.ts          # API 请求封装
 │   │   └── components/
-│   │       ├── SendPanel.tsx      # 发送面板
-│   │       ├── TemplatePanel.tsx  # 模板管理
-│   │       ├── SettingsPanel.tsx  # SMTP 设置
-│   │       └── HistoryPanel.tsx   # 发送历史
+│   │       ├── SendPanel.tsx        # 发送面板
+│   │       ├── TemplatePanel.tsx    # 模板管理
+│   │       ├── SettingsPanel.tsx    # SMTP 设置
+│   │       └── HistoryPanel.tsx     # 发送历史
 │   ├── package.json
 │   └── vite.config.ts
-└── DEPLOY.md               # 部署指南
+├── DEPLOY.md               # 部署指南
+└── README.md
 ```
 
 ## API 接口
