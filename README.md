@@ -7,14 +7,14 @@
 - **模板管理**：预设固定邮件模板，一键调用
 - **简洁发件**：选择模板 → 填写收件人 → 点击发送
 - **发送历史**：记录每次发送状态（成功/失败）
-- **中文兼容**：UTF-8 编码，完美支持中文显示
+- **中文兼容**：使用 Python smtplib 确保中文正确显示
 - **Web 界面**：基于 React + antd，现代简洁的 UI
 
 ## 技术栈
 
 | 层 | 技术 |
 |---|---|
-| 后端 | Node.js 24 + Express + nodemailer |
+| 后端 | Node.js 24 + Express + Python smtplib |
 | 前端 | React 18 + TypeScript + Vite + antd |
 | 数据存储 | JSON 文件（模板、配置、历史记录） |
 | 邮件协议 | SMTP (飞书邮箱 smtp.feishu.cn) |
@@ -46,11 +46,12 @@ npm run dev
 
 ```
 mails-agent/
-├── server/                 # Node 后端
+├── server/                 # Node 后端 + Python 邮件发送
 │   ├── src/
 │   │   ├── index.js        # Express 入口
-│   │   ├── smtp.js         # SMTP 发件逻辑
+│   │   ├── smtp.js         # SMTP 配置 API
 │   │   ├── data.js         # JSON 读写工具
+│   │   ├── smtp.py         # Python 邮件发送脚本
 │   │   └── routes/
 │   │       ├── config.js   # SMTP 配置 API
 │   │       ├── templates.js # 模板 CRUD API
@@ -86,7 +87,7 @@ mails-agent/
 | DELETE | `/api/templates/:id` | 删除模板 |
 | GET | `/api/config` | 获取 SMTP 配置（隐藏密码）|
 | POST | `/api/config` | 保存 SMTP 配置 |
-| POST | `/api/send` | 发送邮件 |
+| POST | `/api/send` | 发送邮件（调用 Python 脚本） |
 | GET | `/api/history` | 获取发送历史 |
 | GET | `/api/health` | 健康检查 |
 
