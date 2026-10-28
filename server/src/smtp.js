@@ -3,7 +3,6 @@ import { readJSON } from './data.js';
 
 export async function sendEmail({ to, subject, body }) {
   const dbConfig = readJSON('config.json', null);
-  // 优先用数据库配置，若为空则用环境变量（部署到服务器时用）
   const config = dbConfig || {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT) || 465,
@@ -22,14 +21,17 @@ export async function sendEmail({ to, subject, body }) {
       user: config.user,
       pass: config.password,
     },
+    // 强制使用 quoted-printable 编码，避免 base64 导致的中文乱码
+    encoding: 'utf-8',
   });
 
   const info = await transporter.sendMail({
-    from: `"安伟伟" <${config.user}>`,
+    from: `"${config.user.split('@')[0]}" <${config.user}>`,
     to,
     subject,
     text: body,
-    charset: 'utf-8',
+    // 明确指定编码格式
+    encoding: 'utf-8',
   });
 
   return { messageId: info.messageId, success: true };
