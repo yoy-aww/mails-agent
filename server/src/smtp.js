@@ -21,15 +21,14 @@ export async function sendEmail({ to, subject, body }) {
       user: config.user,
       pass: config.password,
     },
-    encoding: 'base64',
   });
 
   const info = await transporter.sendMail({
-    from: config.user,
+    from: `"安伟伟" <${config.user}>`,
     to,
     subject,
     text: body,
-    textEncoding: 'base64',
+    html: `<pre style="font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0;">${body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</pre>`,
   });
 
   return { messageId: info.messageId, success: true };
