@@ -31,9 +31,8 @@ def send_email(to, subject, body):
         smtp_host = os.getenv('SMTP_HOST', 'smtp.feishu.cn')
         smtp_port = int(os.getenv('SMTP_PORT', '465'))
 
-    # 正文：强制 quoted-printable，163 客户端兼容性最好
+    # 正文：MIMEText 自动选择 CTE（中文内容默认 base64），不要手动覆盖
     msg = MIMEText(body, 'plain', 'utf-8')
-    msg['Content-Transfer-Encoding'] = 'quoted-printable'
 
     # 发件人：From 头只放裸邮箱地址（HELO 必须是纯 ASCII，带中文名会被飞书拒收）
     msg['From'] = username
