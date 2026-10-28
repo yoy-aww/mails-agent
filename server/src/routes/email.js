@@ -2,8 +2,10 @@ import { readJSON, writeJSON } from '../data.js';
 import { spawn } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const SCRIPT_PATH = path.join(__dirname, '../../smtp.py');
 
 export function initEmailRoutes(app) {
   // POST /api/send
@@ -13,11 +15,10 @@ export function initEmailRoutes(app) {
       return res.status(400).json({ error: 'to, subject, body 不能为空' });
     }
     try {
-      // 使用 Python 脚本发送（中文兼容性更好）
-      const pythonScript = path.join(__dirname, '../../smtp.py');
+      console.log('Sending email via Python script:', SCRIPT_PATH);
       
       await new Promise((resolve, reject) => {
-        const proc = spawn('python3', [pythonScript, to, subject, body], {
+        const proc = spawn('python3', [SCRIPT_PATH, to, subject, body], {
           stdio: ['ignore', 'ignore', 'pipe']
         });
         
