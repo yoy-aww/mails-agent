@@ -24,10 +24,13 @@ export async function sendEmail({ to, subject, body }) {
   });
 
   const info = await transporter.sendMail({
-    from: config.user,  // 只用邮箱，避免中文名编码问题
+    from: config.user,
     to,
     subject,
     text: body,
+    html: `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+      ${body.replace(/\n/g, '<br>')}
+    </div>`,
   });
 
   return { messageId: info.messageId, success: true };
