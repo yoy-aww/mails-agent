@@ -21,12 +21,11 @@ export async function sendEmail({ to, subject, body }) {
       user: config.user,
       pass: config.password,
     },
-    // 强制使用 base64 编码（更可靠）
     encoding: 'base64',
   });
 
   const info = await transporter.sendMail({
-    from: config.user,  // 只用邮箱，避免中文名编码问题
+    from: config.user,
     to,
     subject,
     text: body,
