@@ -21,17 +21,13 @@ export async function sendEmail({ to, subject, body }) {
       user: config.user,
       pass: config.password,
     },
-    // 使用 GBK 编码
-    encoding: 'gbk',
   });
 
   const info = await transporter.sendMail({
-    from: config.user,
+    from: config.user,  // 只用邮箱，避免中文名编码问题
     to,
     subject,
     text: body,
-    charset: 'gbk',
-    textEncoding: 'quoted-printable',
   });
 
   return { messageId: info.messageId, success: true };
