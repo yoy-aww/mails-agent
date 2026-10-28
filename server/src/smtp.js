@@ -21,8 +21,8 @@ export async function sendEmail({ to, subject, body }) {
       user: config.user,
       pass: config.password,
     },
-    // 强制使用 quoted-printable 编码，避免 base64 导致的中文乱码
-    encoding: 'utf-8',
+    // 强制使用 base64 编码（更可靠）
+    encoding: 'base64',
   });
 
   const info = await transporter.sendMail({
@@ -30,8 +30,10 @@ export async function sendEmail({ to, subject, body }) {
     to,
     subject,
     text: body,
-    // 明确指定编码格式
+    // 明确指定 UTF-8 和 base64 编码
     encoding: 'utf-8',
+    textEncoding: 'base64',
+    subjectEncoding: 'utf-8',
   });
 
   return { messageId: info.messageId, success: true };
