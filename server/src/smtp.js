@@ -29,12 +29,7 @@ export async function sendEmail({ to, subject, body }) {
     to,
     subject,
     text: body,
-    html: `<pre style="font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0;">${body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</pre>`,
     charset: 'utf-8',
-    alternatives: [
-      { contentType: 'text/plain; charset=utf-8', content: body },
-      { contentType: 'text/html; charset=utf-8', content: `<pre style="font-family: Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0;">${body.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</pre>` },
-    ],
   });
 
   return { messageId: info.messageId, success: true };
