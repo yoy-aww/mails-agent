@@ -26,7 +26,7 @@ export default function SendPanel() {
     setSending(true);
     setLastResult('');
     try {
-      const res = await api.sendEmail({ to, subject, body, templateId: selectedId });
+      await api.sendEmail({ to, subject, body, templateId: selectedId });
       setLastResult('✅ 发送成功');
       message.success('邮件已发送');
     } catch (err: any) {

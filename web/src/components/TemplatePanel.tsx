@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Input, List, Modal, message, Space, Typography } from 'antd';
+import { Button, Input, List, Modal, message, Typography } from 'antd';
 import { api } from '../api';
 const { TextArea } = Input;
 const { Title } = Typography;
