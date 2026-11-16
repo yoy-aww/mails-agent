@@ -1,0 +1,45 @@
+/* 富文本编辑器 */
+.mails-rich-editor:empty::before {
+  content: attr(data-placeholder);
+  color: #bfbfbf;
+  pointer-events: none;
+}
+
+.mails-rich-editor blockquote {
+  margin: 8px 0;
+  padding: 4px 12px;
+  border-left: 3px solid #d9d9d9;
+  color: #555;
+  background: #fafafa;
+}
+
+.mails-rich-editor pre {
+  margin: 8px 0;
+  padding: 10px 12px;
+  background: #f6f8fa;
+  border-radius: 6px;
+  font-family: Menlo, Consolas, 'Courier New', monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+
+.mails-rich-editor h2 {
+  font-size: 18px;
+  margin: 12px 0 6px;
+}
+
+.mails-rich-editor h3 {
+  font-size: 16px;
+  margin: 10px 0 6px;
+}
+
+.mails-rich-editor ul,
+.mails-rich-editor ol {
+  padding-left: 24px;
+  margin: 6px 0;
+}
+
+.mails-rich-editor a {
+  color: #1677ff;
+  text-decoration: underline;
+}
