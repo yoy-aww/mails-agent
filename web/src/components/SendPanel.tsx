@@ -30,8 +30,8 @@ export default function SendPanel() {
       setLastResult('✅ 发送成功');
       message.success('邮件已发送');
     } catch (err: any) {
-      setLastResult('❌ 发送失败：' + (err?.error?.message || String(err)));
-      message.error('发送失败');
+      setLastResult('❌ 发送失败：' + (err?.message || String(err)));
+      message.error('发送失败：' + (err?.message || ''));
     } finally {
       setSending(false);
     }
