@@ -14,8 +14,8 @@ export function initTemplatesRoutes(app) {
   // POST /api/templates
   app.post('/api/templates', (req, res) => {
     const templates = readJSON('templates.json', []);
-    const { name, subject, body } = req.body;
-    const template = { id: genId(), name, subject, body, createdAt: new Date().toISOString() };
+    const { name, subject, body, bodyHtml } = req.body;
+    const template = { id: genId(), name, subject, body, bodyHtml, createdAt: new Date().toISOString() };
     templates.push(template);
     writeJSON('templates.json', templates);
     res.json({ ok: true, id: template.id });

@@ -16,14 +16,14 @@ const PYTHON_EXE = process.env.PYTHON_EXE
 export function initEmailRoutes(app) {
   // POST /api/send
   app.post('/api/send', async (req, res) => {
-    const { to, subject, body, templateId } = req.body;
+    const { to, subject, body, bodyHtml, bodyText, templateId } = req.body;
     if (!to || !subject || !body) {
       return res.status(400).json({ error: 'to, subject, body 不能为空' });
     }
     try {
       // 创建临时文件传递参数（避免命令行编码问题）；文件名唯一，避免并发请求互相覆盖
       const tmpFile = path.join(SERVER_DIR, `.tmp_email_params_${process.pid}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.json`);
-      const params = JSON.stringify({ to, subject, body });
+      const params = JSON.stringify({ to, subject, body, bodyHtml, bodyText });
       writeFileSync(tmpFile, params, 'utf-8');
 
       console.log('Sending email via Python script:', SCRIPT_PATH);
