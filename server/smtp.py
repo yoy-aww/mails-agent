@@ -3,25 +3,29 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
-from email.utils import formataddr
 import json
 import os
 import sys
 
-SMTP_CONFIG_FILE = 'data/config.json'
+# 配置文件路径：相对脚本自身目录（不依赖 cwd）
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SMTP_CONFIG_FILE = os.path.join(SCRIPT_DIR, 'data', 'config.json')
+SMTP_TIMEOUT = 30
+
 
 def load_config():
     try:
         with open(SMTP_CONFIG_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except:
+    except Exception:
         return {}
+
 
 def send_email(to, subject, body):
     config = load_config()
 
     smtp_host = config.get('host', 'smtp.feishu.cn')
-    smtp_port = config.get('port', 465)
+    smtp_port = int(config.get('port', 465))
     username = config.get('user', '')
     password = config.get('password', '')
 
@@ -30,6 +34,9 @@ def send_email(to, subject, body):
         password = os.getenv('SMTP_PASSWORD', '')
         smtp_host = os.getenv('SMTP_HOST', 'smtp.feishu.cn')
         smtp_port = int(os.getenv('SMTP_PORT', '465'))
+
+    if not username or not password:
+        return {'success': False, 'error': 'SMTP 凭据未配置（user/password 为空）'}
 
     # 正文：MIMEText 自动选择 CTE（中文内容默认 base64），不要手动覆盖
     msg = MIMEText(body, 'plain', 'utf-8')
@@ -43,9 +50,9 @@ def send_email(to, subject, body):
 
     try:
         if smtp_port == 465:
-            server = smtplib.SMTP_SSL(smtp_host, smtp_port)
+            server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=SMTP_TIMEOUT)
         else:
-            server = smtplib.SMTP(smtp_host, smtp_port)
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=SMTP_TIMEOUT)
             server.starttls()
 
         server.login(username, password)
@@ -53,19 +60,26 @@ def send_email(to, subject, body):
         server.quit()
         return {'success': True}
     except Exception as e:
-        return {'success': False, 'error': str(e)}
+        return {'success': False, 'error': '{}: {}'.format(type(e).__name__, e)}
+
 
 if __name__ == '__main__':
     if len(sys.argv) >= 2:
         params_file = sys.argv[1]
-        with open(params_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        try:
+            with open(params_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception as e:
+            print(json.dumps({'success': False, 'error': '读取参数文件失败: {}'.format(e)}, ensure_ascii=False))
+            sys.exit(1)
         to = data.get('to', '')
         subject = data.get('subject', '')
         body = data.get('body', '')
     else:
-        print(json.dumps({'success': False, 'error': 'No parameters file'}))
+        print(json.dumps({'success': False, 'error': 'No parameters file'}, ensure_ascii=False))
         sys.exit(1)
 
     result = send_email(to, subject, body)
     print(json.dumps(result, ensure_ascii=False))
+    # 失败必须以非 0 退出码结束，调用方不能只靠 exit code 判断
+    sys.exit(0 if result.get('success') else 1)
