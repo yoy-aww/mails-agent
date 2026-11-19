@@ -20,6 +20,24 @@ export function initEmailRoutes(app) {
     if (!to || !subject || !body) {
       return res.status(400).json({ error: 'to, subject, body 不能为空' });
     }
+    // 防重：30秒内向同一收件人发送过相同主题且成功的，直接跳过，避免重复发送。
+    // 只有 status='sent' 才算成功（失败的重试不受限）；命中时返回 deduped 标记，
+    // 前端据此提示"已发送过"，且不再写入新历史记录。
+    const DEDUP_WINDOW_MS = 30 * 1000;
+    const recent = readJSON('history.json', []).find(h =>
+      h.status === 'sent' &&
+      h.to === to &&
+      h.subject === subject &&
+      (Date.now() - new Date(h.sentAt).getTime()) < DEDUP_WINDOW_MS
+    );
+    if (recent) {
+      return res.json({
+        ok: true,
+        deduped: true,
+        previousSentAt: recent.sentAt,
+        message: '30秒内已向该邮箱发送过相同主题，已跳过重复发送',
+      });
+    }
     try {
       // 创建临时文件传递参数（避免命令行编码问题）；文件名唯一，避免并发请求互相覆盖
       const tmpFile = path.join(SERVER_DIR, `.tmp_email_params_${process.pid}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.json`);
