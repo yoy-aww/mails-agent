@@ -35,7 +35,7 @@ export default function SendPanel() {
     setSending(true);
     setLastResult('');
     try {
-      await api.sendEmail({
+      const res = await api.sendEmail({
         to,
         subject,
         body: bodyText,          // 兼容旧字段：纯文本
@@ -43,8 +43,14 @@ export default function SendPanel() {
         bodyText,                // 纯文本降级部分
         templateId: selectedId,
       });
-      setLastResult('✅ 发送成功');
-      message.success('邮件已发送');
+      if (res?.deduped) {
+        // 后端 30 秒去重命中：没真正发送，提醒用户不要频繁发送
+        setLastResult('⚠️ ' + (res.message || '30秒内已发送过相同主题，已跳过'));
+        message.warning(res.message || '30秒内已向该邮箱发送过相同主题，已跳过重复发送');
+      } else {
+        setLastResult('✅ 发送成功');
+        message.success('邮件已发送');
+      }
     } catch (err: any) {
       setLastResult('❌ 发送失败：' + (err?.message || String(err)));
       message.error('发送失败：' + (err?.message || ''));
